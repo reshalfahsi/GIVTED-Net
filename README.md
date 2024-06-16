@@ -94,7 +94,8 @@ We use the ``KvasirInstrument``, ``ISIC2018``, and ``WBCImage`` datasets to asse
 To train our model:
 
 ```
-python train.py --dataset_name KvasirInstrument # Please choose either one: KvasirInstrument, ISIC2018, WBCImage
+# Please choose either one: KvasirInstrument, ISIC2018, WBCImage
+python train.py --dataset_name "KvasirInstrument" 
 ```
 
 ## Testing
@@ -110,13 +111,14 @@ python eval.py
 
 ### Segmentation Performance
 
+
 <div align="center">
 
 <img src="https://ieeexplore.ieee.org/mediastore/IEEE/content/media/6287639/10380310/10552270/ardiy4-3411870-large.gif" width="600">
 
-The qualitative results of GIVTED-Net and other models.
-
+The architecture of GIVTED-Net.
 </div>
+
 
 
 For quantitative results, please check our paper.
