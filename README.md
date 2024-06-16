@@ -14,7 +14,7 @@ This is the official repository for "[GIVTED-Net: GhostNet-Mobile Involution ViT
 
 This implementation requires some libraries and frameworks. They can easily be installed by:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 We use the ``KvasirInstrument``, ``ISIC2018``, and ``WBCImage`` datasets to assess the performance of the model. We arrange the datasets in the following:
 
-```
+```bash
 .
 └── experiment/
     ├── KvasirInstrument/
@@ -93,7 +93,7 @@ We use the ``KvasirInstrument``, ``ISIC2018``, and ``WBCImage`` datasets to asse
 
 To train our model:
 
-```
+```bash
 # Please choose either one: KvasirInstrument, ISIC2018, WBCImage
 python train.py --dataset_name "KvasirInstrument" 
 ```
@@ -102,7 +102,7 @@ python train.py --dataset_name "KvasirInstrument"
 
 We conducted the evaluation on the Raspberry Pi 4. However, it can be run on some other hardware, too.
 
-```
+```bash
 python eval.py
 ```
 
@@ -136,7 +136,7 @@ python eval.py
 
 ## Citation
 
-```
+```bibtex
 @ARTICLE{10552270,
   author={Dwika Hefni Al-Fahsi, Resha and Naghim Fauzaini Prawirosoenoto, Ahmad and Adi Nugroho, Hanung and Ardiyanto, Igi},
   journal={IEEE Access}, 
