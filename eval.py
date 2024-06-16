@@ -19,7 +19,7 @@ from givtednet.model import GIVTEDNet
 
 def parse_arguments():
     # Create an ArgumentParser object
-    parser = argparse.ArgumentParser(description="Training configuration.")
+    parser = argparse.ArgumentParser(description="Testing configuration.")
 
     # Add arguments
     parser.add_argument("--image_size", type=int, default=224, help="Testing image size.")
