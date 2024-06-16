@@ -45,7 +45,8 @@ We use the ``KvasirInstrument``, ``ISIC2018``, and ``WBCImage`` datasets to asse
     │   │   ├── image_00.jpg
     │   │   └── ...
     │   └── model_pth/
-    │       └── GIVTEDNet.pth
+    │       ├── GIVTEDNet.pth
+    │       └── ...
     ├── ISIC2018/
     │   ├── TrainDataset/
     │   │   ├── images/
@@ -65,7 +66,8 @@ We use the ``KvasirInstrument``, ``ISIC2018``, and ``WBCImage`` datasets to asse
     │   │   ├── image_00.jpg
     │   │   └── ...
     │   └── model_pth/
-    │       └── GIVTEDNet.pth
+    │       ├── GIVTEDNet.pth
+    │       └── ...
     └── WBCImage/
         ├── TrainDataset/
         │   ├── images/
@@ -85,7 +87,8 @@ We use the ``KvasirInstrument``, ``ISIC2018``, and ``WBCImage`` datasets to asse
         │   ├── image_00.jpg
         │   └── ...
         └── model_pth/
-            └── GIVTEDNet.pth
+            ├── GIVTEDNet.pth
+            └── ...
 ```
 
 
