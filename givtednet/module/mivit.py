@@ -21,7 +21,7 @@ class TokenMixer(nn.Module):
         return x
 
 
-class Transformer(nn.Module):
+class InvoFormer(nn.Module):
     def __init__(
         self,
         dim,
@@ -51,7 +51,7 @@ class Transformer(nn.Module):
         return x
 
 
-class MobileViTBlock(nn.Module):
+class MIViTBlock(nn.Module):
     def __init__(
         self,
         channel,
@@ -84,7 +84,7 @@ class MobileViTBlock(nn.Module):
             nn.ReLU(inplace=True),
         )
 
-        self.transformer = Transformer(dim, depth, mlp_ratio, dropout)
+        self.invoformer = InvoFormer(dim, depth, mlp_ratio, dropout)
 
         self.conv3 = nn.Sequential(
             nn.Conv2d(dim, channel, 1, bias=False),
@@ -109,7 +109,7 @@ class MobileViTBlock(nn.Module):
         x = self.conv2(torch.cat([q, y], 1))
 
         # Global representations
-        z = self.transformer(x)
+        z = self.invoformer(x)
 
         # Fusion
         z = self.conv3(z)

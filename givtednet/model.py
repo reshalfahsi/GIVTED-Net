@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from givtednet.module.ghostnet import GhostBottleneck
 from givtednet.module.common import ConvBnAct
-from givtednet.module.mobilevit import MobileViTBlock
+from givtednet.module.mivit import MIViTBlock
 
 
 class GIVTEDNet(nn.Module):
@@ -42,25 +42,25 @@ class GIVTEDNet(nn.Module):
         DIM = [50, 40, 30, 20]
         DEPTH = [1, 1, 2, 2]
 
-        self.decoder3 = MobileViTBlock(
+        self.decoder3 = MIViTBlock(
             channel=40,
             dim=DIM[0],
             depth=DEPTH[0],
             dropout=dropout,
         )
-        self.decoder2 = MobileViTBlock(
+        self.decoder2 = MIViTBlock(
             channel=32,
             dim=DIM[1],
             depth=DEPTH[1],
             dropout=dropout,
         )
-        self.decoder1 = MobileViTBlock(
+        self.decoder1 = MIViTBlock(
             channel=24,
             dim=DIM[2],
             depth=DEPTH[2],
             dropout=dropout,
         )
-        self.decoder0 = MobileViTBlock(
+        self.decoder0 = MIViTBlock(
             channel=16,
             dim=DIM[3],
             depth=DEPTH[3],
