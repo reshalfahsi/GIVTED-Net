@@ -12,8 +12,14 @@ def hard_sigmoid(x, inplace: bool = True):
 
 class ConvNormAct(nn.Module):
     def __init__(
-        self, in_chs, out_chs, kernel_size, stride=1, groups=1, norm="bn", act="relu"
-    ):
+            self,
+            in_chs,
+            out_chs,
+            kernel_size,
+            stride=1,
+            groups=1,
+            norm="bn",
+            act="relu"):
         super(ConvNormAct, self).__init__()
         self.conv = nn.Conv2d(
             in_chs,
@@ -24,11 +30,14 @@ class ConvNormAct(nn.Module):
             groups=groups,
             bias=(norm is None),
         )
-        assert norm in ["bn", "in", None], f"Normalization is not supported: {norm}"
+        assert norm in [
+            "bn", "in", None], f"Normalization is not supported: {norm}"
         self.norm = norm
         if norm is not None:
-            self.norm = nn.BatchNorm2d(out_chs) if self.norm == "bn" else nn.InstanceNorm2d(out_chs)
-        assert act in ["relu", "hard_sigmoid", None], f"Activation function is not supported: {act}"
+            self.norm = nn.BatchNorm2d(
+                out_chs) if self.norm == "bn" else nn.InstanceNorm2d(out_chs)
+        assert act in ["relu", "hard_sigmoid",
+                       None], f"Activation function is not supported: {act}"
         self.act = act
 
     def forward(self, x):
@@ -71,8 +80,10 @@ class SqueezeExcite(nn.Module):
     ):
         super(SqueezeExcite, self).__init__()
         reduced_chs = _make_divisible(in_chs * se_ratio, divisor)
-        self.conv_reduce = ConvNormAct(in_chs, reduced_chs, 1, norm=None, act="relu")
-        self.conv_expand = ConvNormAct(reduced_chs, in_chs, 1, norm=None, act="hard_sigmoid")
+        self.conv_reduce = ConvNormAct(
+            in_chs, reduced_chs, 1, norm=None, act="relu")
+        self.conv_expand = ConvNormAct(
+            reduced_chs, in_chs, 1, norm=None, act="hard_sigmoid")
         self.dropout = dropout
 
     def forward(self, x):

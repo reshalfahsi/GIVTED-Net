@@ -9,8 +9,15 @@ from givtednet.module.common import ConvNormAct, SqueezeExcite
 
 class GhostModule(nn.Module):
     def __init__(
-        self, inp, oup, kernel_size=1, cheap_kernel=3, stride=1, ratio=2, norm="bn", act="relu"
-    ):
+            self,
+            inp,
+            oup,
+            kernel_size=1,
+            cheap_kernel=3,
+            stride=1,
+            ratio=2,
+            norm="bn",
+            act="relu"):
         super(GhostModule, self).__init__()
         self.oup = oup
         init_channels = math.ceil(oup / ratio)

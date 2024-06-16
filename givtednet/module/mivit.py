@@ -63,13 +63,29 @@ class MIViTBlock(nn.Module):
     ):
         super().__init__()
 
-        self.conv1 = ConvNormAct(channel, channel, kernel_size, groups=channel, norm="in", act="relu")
-        self.conv2 = ConvNormAct(channel + 3, dim, kernel_size, norm="in", act="relu")
+        self.conv1 = ConvNormAct(
+            channel,
+            channel,
+            kernel_size,
+            groups=channel,
+            norm="in",
+            act="relu")
+        self.conv2 = ConvNormAct(
+            channel + 3,
+            dim,
+            kernel_size,
+            norm="in",
+            act="relu")
 
         self.invoformer = InvoFormer(dim, depth, mlp_ratio, dropout)
 
         self.conv3 = ConvNormAct(dim, channel, 1, norm="in", act="relu")
-        self.conv4 = ConvNormAct(2 * channel, channel, kernel_size, norm="in", act="relu")
+        self.conv4 = ConvNormAct(
+            2 * channel,
+            channel,
+            kernel_size,
+            norm="in",
+            act="relu")
 
     def forward(self, x, y):
         N, C, H, W = x.shape

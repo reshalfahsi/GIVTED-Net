@@ -86,34 +86,49 @@ class GIVTEDNet(nn.Module):
         x = self.latent(enc3)
 
         x = self.convdec3(
-            F.interpolate(x, scale_factor=2, mode="bilinear", align_corners=True)
-        )
+            F.interpolate(
+                x,
+                scale_factor=2,
+                mode="bilinear",
+                align_corners=True))
 
         x = x + enc3
         x = self.decoder3(x, y)
 
         x = self.convdec2(
-            F.interpolate(x, scale_factor=2, mode="bilinear", align_corners=True)
-        )
+            F.interpolate(
+                x,
+                scale_factor=2,
+                mode="bilinear",
+                align_corners=True))
 
         x = x + enc2
         x = self.decoder2(x, y)
 
         x = self.convdec1(
-            F.interpolate(x, scale_factor=2, mode="bilinear", align_corners=True)
-        )
+            F.interpolate(
+                x,
+                scale_factor=2,
+                mode="bilinear",
+                align_corners=True))
 
         x = x + enc1
         x = self.decoder1(x, y)
 
         x = self.convdec0(
-            F.interpolate(x, scale_factor=2, mode="bilinear", align_corners=True)
-        )
+            F.interpolate(
+                x,
+                scale_factor=2,
+                mode="bilinear",
+                align_corners=True))
 
         x = x + enc0
         x = self.decoder0(x, y)
 
         x = self.out(
-            F.interpolate(x, scale_factor=2, mode="bilinear", align_corners=True)
-        )
+            F.interpolate(
+                x,
+                scale_factor=2,
+                mode="bilinear",
+                align_corners=True))
         return x

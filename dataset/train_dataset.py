@@ -11,8 +11,10 @@ class TrainDataset(data.Dataset):
         self.image_size = image_size
 
         print("Read Files in Directory")
-        self.images = [os.path.join(image_root, f) for f in os.listdir(image_root) if f.endswith('.jpg') or f.endswith('.png')]
-        self.gts = [os.path.join(gt_root, f) for f in os.listdir(gt_root) if f.endswith('.jpg') or f.endswith('.png')]
+        self.images = [os.path.join(image_root, f) for f in os.listdir(
+            image_root) if f.endswith('.jpg') or f.endswith('.png')]
+        self.gts = [os.path.join(gt_root, f) for f in os.listdir(
+            gt_root) if f.endswith('.jpg') or f.endswith('.png')]
         print("Sort Files")
         self.images = sorted(self.images)
         self.gts = sorted(self.gts)

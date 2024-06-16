@@ -22,9 +22,21 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Testing configuration.")
 
     # Add arguments
-    parser.add_argument("--image_size", type=int, default=224, help="Testing image size.")
-    parser.add_argument("--epsilon", type=float, default=1e-8, help="Small value for numerical stability.")
-    parser.add_argument("--threshold", type=float, default=0.5, help="Threshold for prediction.")
+    parser.add_argument(
+        "--image_size",
+        type=int,
+        default=224,
+        help="Testing image size.")
+    parser.add_argument(
+        "--epsilon",
+        type=float,
+        default=1e-8,
+        help="Small value for numerical stability.")
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.5,
+        help="Threshold for prediction.")
 
     # Parse arguments from the command line
     return parser.parse_args()
@@ -46,7 +58,10 @@ def eval_fn():
             model.load_state_dict(torch.load(pth_path))
             model.cuda()
         else:
-            model.load_state_dict(torch.load(pth_path, map_location=torch.device('cpu')))
+            model.load_state_dict(
+                torch.load(
+                    pth_path,
+                    map_location=torch.device('cpu')))
 
         if print_once_param:
             macs, params = get_model_complexity_info(
@@ -74,11 +89,12 @@ def eval_fn():
         with torch.no_grad():
             for _ in tqdm(range(warmup_counter)):
                 if torch.cuda.is_available():
-                    x = torch.rand(1, 3, config.image_size, config.image_size).cuda()
+                    x = torch.rand(
+                        1, 3, config.image_size, config.image_size).cuda()
                 else:
-                    x = torch.rand(1, 3, config.image_size, config.image_size).cpu()
+                    x = torch.rand(
+                        1, 3, config.image_size, config.image_size).cpu()
                 y = model(x)
-        
 
             data_path_ = f"./experiment/{config.dataset_name}/TestDataset"
             save_path_ = f"./experiment/{config.dataset_name}/result"
@@ -110,12 +126,18 @@ def eval_fn():
                 res = model(image)
                 end = time.time()
                 FPS.append(1. / (end - start))
-                res = F.interpolate(res, size=gt.shape, mode="bilinear", align_corners=False)
+                res = F.interpolate(
+                    res,
+                    size=gt.shape,
+                    mode="bilinear",
+                    align_corners=False)
 
                 res = res.sigmoid().data.cpu().numpy().squeeze()
-                res = abs(res - res.min()) / (abs(res.max() - res.min()) + config.epsilon)
+                res = abs(res - res.min()) / \
+                    (abs(res.max() - res.min()) + config.epsilon)
 
-                dice, iou, recall, precision = evaluate(res, gt, config.threshold, config.epsilon)
+                dice, iou, recall, precision = evaluate(
+                    res, gt, config.threshold, config.epsilon)
                 DSC.append(dice)
                 IoU.append(iou)
                 Recall.append(recall)
@@ -146,7 +168,6 @@ def eval_fn():
     print("----------------------------------------------------")
     print()
     print("Evaluation Complete")
-
 
 
 if __name__ == "__main__":

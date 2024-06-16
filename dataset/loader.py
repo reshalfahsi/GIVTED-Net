@@ -3,7 +3,12 @@ import torch.utils.data as data
 from dataset.train_dataset import TrainDataset
 
 
-def get_loader(dataset, batchsize, shuffle=True, num_workers=2, pin_memory=True):
+def get_loader(
+        dataset,
+        batchsize,
+        shuffle=True,
+        num_workers=2,
+        pin_memory=True):
     data_loader = data.DataLoader(
         dataset=dataset,
         batch_size=batchsize,

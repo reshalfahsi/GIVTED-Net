@@ -36,7 +36,7 @@ def evaluate(pred, gt, threshold=0.5, epsilon=1e-8):
     dice = abs(2 * TP) / (abs(2 * TP + FP + FN) + epsilon)
 
     TN = np.sum((label_pred == 0) & (label_gt == 0))
-    recall = TP/(TP + FN)
-    precision = TP/(TP + FP)
+    recall = TP / (TP + FN)
+    precision = TP / (TP + FP)
 
     return dice, iou, recall, precision

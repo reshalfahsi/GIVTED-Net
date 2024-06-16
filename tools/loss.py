@@ -13,5 +13,5 @@ class LossFunction(nn.Module):
         pred = torch.sigmoid(pred)
         inter = ((pred * mask)).sum(dim=(2, 3))
         union = ((pred + mask)).sum(dim=(2, 3))
-        dice = 1.0 - (2 * inter + self.eps)/(union + self.eps)
+        dice = 1.0 - (2 * inter + self.eps) / (union + self.eps)
         return dice.mean() + bce

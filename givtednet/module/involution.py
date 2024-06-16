@@ -19,11 +19,21 @@ class Involution(nn.Module):
         super(Involution, self).__init__()
 
         reduced_chs = _make_divisible(channel_in * reduction_ratio, divisor)
-        
+
         self.o = nn.AvgPool2d(stride, stride) if stride > 1 else None
-        self.reduce = ConvNormAct(channel_in, reduced_chs, 1, norm=None, act="relu")
-        self.span = nn.Conv2d(reduced_chs, kernel_size * kernel_size * groups, 1)
-        self.unfold = nn.Unfold(kernel_size, dilation, kernel_size // 2, stride)
+        self.reduce = ConvNormAct(
+            channel_in, reduced_chs, 1, norm=None, act="relu")
+        self.span = nn.Conv2d(
+            reduced_chs,
+            kernel_size *
+            kernel_size *
+            groups,
+            1)
+        self.unfold = nn.Unfold(
+            kernel_size,
+            dilation,
+            kernel_size // 2,
+            stride)
 
         self.groups = groups
         self.kernel_size = kernel_size
@@ -32,8 +42,16 @@ class Involution(nn.Module):
         B, C, H, W = x.shape
         x_unfolded = self.unfold(x)  # B,CxKxK,HxW
         x_unfolded = x_unfolded.view(
-            B, self.groups, C // self.groups, self.kernel_size * self.kernel_size, H, W
-        )
+            B,
+            self.groups,
+            torch.div(
+                C,
+                self.groups,
+                rounding_mode='floor'),
+            self.kernel_size *
+            self.kernel_size,
+            H,
+            W)
 
         # kernel generation, Eqn.(6)
         if self.o is not None:

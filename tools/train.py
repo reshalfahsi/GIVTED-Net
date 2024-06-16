@@ -8,10 +8,10 @@ def train_epoch(
     model,
     train_loader,
     criterion,
-    optimizer, 
-    n, 
+    optimizer,
+    n,
     epoch,
-    batch_size, 
+    batch_size,
     total_step,
 ):
     model.train()
@@ -53,6 +53,6 @@ def train_epoch(
                       n, epoch, i, total_step,
                       loss_record.show(), optimizer.param_groups[0]['lr'],
                   )
-            )
+                  )
 
     return loss_record.show()

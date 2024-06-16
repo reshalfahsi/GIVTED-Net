@@ -9,8 +9,10 @@ import torch
 class TestDataset(object):
     def __init__(self, image_root, gt_root, image_size):
         self.image_size = image_size
-        self.images = [os.path.join(image_root, f) for f in os.listdir(image_root) if f.endswith('.jpg') or f.endswith('.png')]
-        self.gts = [os.path.join(gt_root, f) for f in os.listdir(gt_root) if f.endswith('.tif') or f.endswith('.png') or f.endswith('.jpg')]
+        self.images = [os.path.join(image_root, f) for f in os.listdir(
+            image_root) if f.endswith('.jpg') or f.endswith('.png')]
+        self.gts = [os.path.join(gt_root, f) for f in os.listdir(
+            gt_root) if f.endswith('.tif') or f.endswith('.png') or f.endswith('.jpg')]
         self.images = sorted(self.images)
         self.gts = sorted(self.gts)
         self.transform = transforms.Compose([

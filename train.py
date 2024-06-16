@@ -20,18 +20,67 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Training configuration.")
 
     # Add arguments
-    parser.add_argument("--epoch", type=int, default=100, help="Training epochs.")
-    parser.add_argument("-lr", "--learning_rate", type=float, default=1e-2, help="Learning rate for training.")
-    parser.add_argument("--dropout", type=float, default=0.1, help="Dropout rate for the model.")
-    parser.add_argument("--weight_decay", type=float, default=1e-3, help="Weight decay for SGD.")
-    parser.add_argument("--momentum", type=float, default=0.9, help="Momentum for SGD.")
-    parser.add_argument("--batch_size", type=int, default=16, help="Training batch sizes.")
-    parser.add_argument("--image_size", type=int, default=224, help="Training image size.")
-    parser.add_argument("--epsilon", type=float, default=1e-8, help="Small value for numerical stability.")
-    parser.add_argument("--early_stopping_patience", type=int, default=10, help="Early stopping patience.")
-    parser.add_argument("--lr_scheduler_cooldown", type=int, default=8, help="Learning rate scheduler cooldown.")
-    parser.add_argument("--step_lr", type=int, default=3, help="How many step to reduce the learning rate once the performance degrades during training.")
-    parser.add_argument("--dataset_name", type=str, required=True, help="Dataset name.")
+    parser.add_argument(
+        "--epoch",
+        type=int,
+        default=100,
+        help="Training epochs.")
+    parser.add_argument(
+        "-lr",
+        "--learning_rate",
+        type=float,
+        default=1e-2,
+        help="Learning rate for training.")
+    parser.add_argument(
+        "--dropout",
+        type=float,
+        default=0.1,
+        help="Dropout rate for the model.")
+    parser.add_argument(
+        "--weight_decay",
+        type=float,
+        default=1e-3,
+        help="Weight decay for SGD.")
+    parser.add_argument(
+        "--momentum",
+        type=float,
+        default=0.9,
+        help="Momentum for SGD.")
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=16,
+        help="Training batch sizes.")
+    parser.add_argument(
+        "--image_size",
+        type=int,
+        default=224,
+        help="Training image size.")
+    parser.add_argument(
+        "--epsilon",
+        type=float,
+        default=1e-8,
+        help="Small value for numerical stability.")
+    parser.add_argument(
+        "--early_stopping_patience",
+        type=int,
+        default=10,
+        help="Early stopping patience.")
+    parser.add_argument(
+        "--lr_scheduler_cooldown",
+        type=int,
+        default=8,
+        help="Learning rate scheduler cooldown.")
+    parser.add_argument(
+        "--step_lr",
+        type=int,
+        default=3,
+        help="How many step to reduce the learning rate once the performance degrades during training.")
+    parser.add_argument(
+        "--dataset_name",
+        type=str,
+        required=True,
+        help="Dataset name.")
 
     # Parse arguments from the command line
     return parser.parse_args()
@@ -56,7 +105,10 @@ def train_fn():
         if torch.cuda.is_available():
             model.load_state_dict(torch.load(weight_pth))
         else:
-            model.load_state_dict(torch.load(weight_pth, map_location=torch.device('cpu')))
+            model.load_state_dict(
+                torch.load(
+                    weight_pth,
+                    map_location=torch.device('cpu')))
 
     if torch.cuda.is_available():
         model.cuda()
@@ -98,7 +150,7 @@ def train_fn():
     )
 
     early_stopping = EarlyStopping(patience=config.early_stopping_patience)
-    
+
     total_step = len(train_loader)
 
     print("#" * 20, "Start Training", "#" * 20)
@@ -108,10 +160,10 @@ def train_fn():
             model,
             train_loader,
             criterion,
-            optimizer, 
-            n, 
+            optimizer,
+            n,
             config.epoch,
-            config.batch_size, 
+            config.batch_size,
             total_step
         ).data.cpu().numpy()
         loss_train.append(loss)
@@ -123,8 +175,10 @@ def train_fn():
             model.eval()
 
             images, gts = pack
-            images = Variable(images).cuda() if torch.cuda.is_available() else Variable(images)
-            gts = Variable(gts).cuda() if torch.cuda.is_available() else Variable(gts)
+            images = Variable(images).cuda(
+            ) if torch.cuda.is_available() else Variable(images)
+            gts = Variable(gts).cuda(
+            ) if torch.cuda.is_available() else Variable(gts)
 
             with torch.no_grad():
                 res = model(images)
@@ -134,12 +188,13 @@ def train_fn():
 
                 res = torch.sigmoid(res)
 
-                res = abs(res - res.min()) / (abs(res.max() - res.min()) + config.epsilon)
+                res = abs(res - res.min()) / \
+                    (abs(res.max() - res.min()) + config.epsilon)
 
                 inter = ((res * gts)).sum(dim=(2, 3))
                 union = ((res + gts)).sum(dim=(2, 3))
 
-                dice = (2 * abs(inter))/(abs(union) + config.epsilon)
+                dice = (2 * abs(inter)) / (abs(union) + config.epsilon)
                 dice = float(dice.mean().data.cpu().numpy())
 
                 val_score += dice
@@ -156,19 +211,26 @@ def train_fn():
 
         if val_score > best:
             best = val_score
-            torch.save(model.state_dict(), os.path.join(train_save, f'GIVTEDNet_best.pth'))
+            torch.save(
+                model.state_dict(),
+                os.path.join(
+                    train_save,
+                    f'GIVTEDNet_best.pth'))
 
-        torch.save(model.state_dict(), os.path.join(train_save, f'GIVTEDNet.pth'))
+        torch.save(
+            model.state_dict(),
+            os.path.join(
+                train_save,
+                f'GIVTEDNet.pth'))
 
-        plt.plot(loss_train, color = 'r', label='train')
-        plt.plot(loss_val, color = 'b', label='validation')
+        plt.plot(loss_train, color='r', label='train')
+        plt.plot(loss_val, color='b', label='validation')
         plt.xlabel("epoch")
         plt.ylabel("loss")
         plt.legend()
         plt.grid()
         plt.savefig(f"./experiment/{config.dataset_name}/loss_plot.png")
         plt.clf()
-
 
         with open(f"./experiment/{config.dataset_name}/loss_history.txt", 'a') as f:
             f.write("Loss Train: [")
@@ -180,7 +242,6 @@ def train_fn():
                 f.write(f" {val} ")
             f.write("]\n")
             f.write("-----------------------------------------------------------\n")
-
 
         if early_stopping.early_stop(loss_val[-1]):
             print(f"Training stopped at epoch: {n}")
