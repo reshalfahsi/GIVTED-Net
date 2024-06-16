@@ -112,13 +112,8 @@ python eval.py
 ### Segmentation Performance
 
 
-<div align="center">
-
-<img src="https://ieeexplore.ieee.org/mediastore/IEEE/content/media/6287639/10380310/10552270/ardiy4-3411870-large.gif" width="600">
-
-The architecture of GIVTED-Net.
-</div>
-
+![qualitative](./assets/ardiy4-3411870-large.gif)
+*The qualitative results of GIVTED-Net and other models.*
 
 
 For quantitative results, please check our paper.
