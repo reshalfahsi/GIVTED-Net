@@ -98,11 +98,10 @@ class GhostBottleneck(nn.Module):
                 bn=True,
                 act=False,
             ),
-        ) if (in_chs == out_chs and self.stride == 1) else None
+        ) if not (in_chs == out_chs and self.stride == 1) else None
 
     def forward(self, x):
-        if self.shortcut is not None:
-            residual = x
+        residual = x
 
         # 1st ghost bottleneck
         x = self.ghost1(x)
@@ -120,4 +119,6 @@ class GhostBottleneck(nn.Module):
 
         if self.shortcut is not None:
             x += self.shortcut(residual)
+        else:
+            x += residual
         return x

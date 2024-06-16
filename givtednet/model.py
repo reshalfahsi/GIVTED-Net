@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 from givtednet.module.ghostnet import GhostBottleneck
 from givtednet.module.common import ConvBnAct
+from givtednet.module.mobilevit import MobileViTBlock
 
 
 class GIVTEDNet(nn.Module):

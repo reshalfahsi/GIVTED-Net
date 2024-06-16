@@ -7,7 +7,7 @@
 The architecture of GIVTED-Net.
 </div>
 
-This is the official repository for "[GIVTED-Net: GhostNet-Mobile Involution ViT Encoder-Decoder Network for Lightweight Medical Image Segmentation](https://ieeexplore.ieee.org/document/10552270).". Here, we introduce MIViT (Mobile Involution Vision Transformer) modules powered by newly formed transformer blocks, InvoFormer. The blocks follow the design principle of MetaFormer with an involution-based token mixer and a squeeze-and-excitation module-based channel MLP. These components, along with the Ghost bottlenecks of GhostNet, are compiled in the proposed medical image segmentation model, GIVTED-Net. The model is lightweight (0.19M of parameters and 0.56GFLOPs), fast (2.47 FPS on the Raspberry Pi 4), and quantitatively superior to prior models.
+This is the official repository for "[GIVTED-Net: GhostNet-Mobile Involution ViT Encoder-Decoder Network for Lightweight Medical Image Segmentation](https://ieeexplore.ieee.org/document/10552270).". Here, we introduce MIViT (Mobile Involution Vision Transformer) modules powered by newly formed transformer blocks, InvoFormer. The blocks follow the design principle of MetaFormer with an involution-based token mixer and a squeeze-and-excitation module-based channel MLP. These components, along with the Ghost bottlenecks of GhostNet, are compiled in the proposed medical image segmentation model, GIVTED-Net. GhostNet bottlenecks are utilized in the encoder and MIViT modules are used in the decoder. The model is lightweight (0.19M of parameters and 0.56GFLOPs), fast (2.47 FPS on the Raspberry Pi 4), and quantitatively superior to prior models.
 
 
 ## Requirements

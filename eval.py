@@ -1,3 +1,6 @@
+import torch
+import torch.nn.functional as F
+
 import time
 import numpy as np
 
@@ -31,44 +34,51 @@ def eval_fn():
     # Parse arguments
     config = parse_arguments()
 
-    model = GIVTEDNet()
-    if torch.cuda.is_available():
-        model.load_state_dict(torch.load(pth_path))
-        model.cuda()
-    else:
-        model.load_state_dict(torch.load(pth_path, map_location=torch.device('cpu')))
-
-    macs, params = get_model_complexity_info(
-        model,
-        (3, config.image_size, config.image_size),
-        as_strings=True,
-        print_per_layer_stat=True,
-        verbose=True,
-    )
-    print("\n\n=======================================================")
-    print("{:<30}  {:<8}".format("Computational complexity: ", macs))
-    print("{:<30}  {:<8}".format("Number of parameters: ", params))
-    print("=======================================================\n\n")
-
+    print_once_param = True
     warmup_counter = 20
 
-    if torch.cuda.is_available():
-        x = torch.rand(1, 3, config.image_size, config.image_size).cuda()
-    else:
-        x = torch.rand(1, 3, config.image_size, config.image_size).cpu()
+    for _data_name in available_dataset:
 
-    model = torch.jit.trace(model, x)
-    model.eval()
+        pth_path = f"./experiment/{_data_name}/model_pth/GIVTEDNet_best.pth"
 
-    with torch.no_grad():
-        for _ in tqdm(range(warmup_counter)):
-            if torch.cuda.is_available():
-                x = torch.rand(1, 3, config.image_size, config.image_size).cuda()
-            else:
-                x = torch.rand(1, 3, config.image_size, config.image_size).cpu()
-            y = model(x)
+        model = GIVTEDNet()
+        if torch.cuda.is_available():
+            model.load_state_dict(torch.load(pth_path))
+            model.cuda()
+        else:
+            model.load_state_dict(torch.load(pth_path, map_location=torch.device('cpu')))
 
-        for _data_name in available_dataset:
+        if print_once_param:
+            macs, params = get_model_complexity_info(
+                model,
+                (3, config.image_size, config.image_size),
+                as_strings=True,
+                print_per_layer_stat=True,
+                verbose=True,
+            )
+            print("\n\n=======================================================")
+            print("{:<30}  {:<8}".format("Computational complexity: ", macs))
+            print("{:<30}  {:<8}".format("Number of parameters: ", params))
+            print("=======================================================\n\n")
+
+            print_once_param = False
+
+        if torch.cuda.is_available():
+            x = torch.rand(1, 3, config.image_size, config.image_size).cuda()
+        else:
+            x = torch.rand(1, 3, config.image_size, config.image_size).cpu()
+
+        model = torch.jit.trace(model, x)
+        model.eval()
+
+        with torch.no_grad():
+            for _ in tqdm(range(warmup_counter)):
+                if torch.cuda.is_available():
+                    x = torch.rand(1, 3, config.image_size, config.image_size).cuda()
+                else:
+                    x = torch.rand(1, 3, config.image_size, config.image_size).cpu()
+                y = model(x)
+        
 
             data_path_ = f"./experiment/{config.dataset_name}/TestDataset"
             save_path_ = f"./experiment/{config.dataset_name}/result"

@@ -59,7 +59,6 @@ class SqueezeExcite(nn.Module):
         self,
         in_chs,
         se_ratio=0.25,
-        reduced_base_chs=None,
         gate_fn=hard_sigmoid,
         divisor=4,
         dropout=0.0,
@@ -67,7 +66,7 @@ class SqueezeExcite(nn.Module):
     ):
         super(SqueezeExcite, self).__init__()
         self.gate_fn = gate_fn
-        reduced_chs = _make_divisible((reduced_base_chs or in_chs) * se_ratio, divisor)
+        reduced_chs = _make_divisible(in_chs * se_ratio, divisor)
         self.conv_reduce = ConvBnAct(in_chs, reduced_chs, 1, bn=False, act=True)
         self.conv_expand = ConvBnAct(reduced_chs, in_chs, 1, bn=False, act=False)
         self.dropout = dropout
