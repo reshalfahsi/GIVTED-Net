@@ -113,10 +113,7 @@ python eval.py
 
 
 ![qualitative](./assets/ardiy4-3411870-large.gif)
-<div align="center">The qualitative results of GIVTED-Net and other models.</div>
-
-
-For quantitative results, please check our paper.
+<div align="center">The qualitative results of GIVTED-Net and other models. For quantitative results, please check our paper.</div>
 
 
 ### Computational Performance
