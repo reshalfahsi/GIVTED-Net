@@ -3,11 +3,18 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class ConvBnAct(nn.Module):
+def hard_sigmoid(x, inplace: bool = True):
+    if inplace:
+        return x.add_(3.0).clamp_(0.0, 6.0).mul_(0.16666666666666666)
+    else:
+        return F.relu6(x + 3.0) * 0.16666666666666666
+
+
+class ConvNormAct(nn.Module):
     def __init__(
-        self, in_chs, out_chs, kernel_size, stride=1, groups=1, bn=True, act=True
+        self, in_chs, out_chs, kernel_size, stride=1, groups=1, norm="bn", act="relu"
     ):
-        super(ConvBnAct, self).__init__()
+        super(ConvNormAct, self).__init__()
         self.conv = nn.Conv2d(
             in_chs,
             out_chs,
@@ -15,17 +22,23 @@ class ConvBnAct(nn.Module):
             stride,
             kernel_size // 2,
             groups=groups,
-            bias=(not bn),
+            bias=(norm is None),
         )
-        self.bn = nn.BatchNorm2d(out_chs) if bn else None
+        assert norm in ["bn", "in", None], f"Normalization is not supported: {norm}"
+        self.norm = norm
+        if norm is not None:
+            self.norm = nn.BatchNorm2d(out_chs) if self.norm == "bn" else nn.InstanceNorm2d(out_chs)
+        assert act in ["relu", "hard_sigmoid", None], f"Activation function is not supported: {act}"
         self.act = act
 
     def forward(self, x):
         x = self.conv(x)
-        if self.bn is not None:
-            x = self.bn(x)
-        if self.act:
+        if self.norm is not None:
+            x = self.norm(x)
+        if self.act == "relu":
             x = torch.relu_(x)
+        elif self.act == "hard_sigmoid":
+            x = hard_sigmoid(x)
         return x
 
 
@@ -47,28 +60,19 @@ def _make_divisible(v, divisor, min_value=None):
     return new_v
 
 
-def hard_sigmoid(x, inplace: bool = True):
-    if inplace:
-        return x.add_(3.0).clamp_(0.0, 6.0).mul_(0.16666666666666666)
-    else:
-        return F.relu6(x + 3.0) * 0.16666666666666666
-
-
 class SqueezeExcite(nn.Module):
     def __init__(
         self,
         in_chs,
         se_ratio=0.25,
-        gate_fn=hard_sigmoid,
         divisor=4,
         dropout=0.0,
         **_
     ):
         super(SqueezeExcite, self).__init__()
-        self.gate_fn = gate_fn
         reduced_chs = _make_divisible(in_chs * se_ratio, divisor)
-        self.conv_reduce = ConvBnAct(in_chs, reduced_chs, 1, bn=False, act=True)
-        self.conv_expand = ConvBnAct(reduced_chs, in_chs, 1, bn=False, act=False)
+        self.conv_reduce = ConvNormAct(in_chs, reduced_chs, 1, norm=None, act="relu")
+        self.conv_expand = ConvNormAct(reduced_chs, in_chs, 1, norm=None, act="hard_sigmoid")
         self.dropout = dropout
 
     def forward(self, x):
@@ -76,5 +80,5 @@ class SqueezeExcite(nn.Module):
         x_se = self.conv_reduce(x_se)
         x_se = F.dropout2d(x_se, self.dropout, self.training)
         x_se = self.conv_expand(x_se)
-        x = x * self.gate_fn(x_se)
+        x = x * x_se
         return x

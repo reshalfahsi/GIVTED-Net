@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from givtednet.module.ghostnet import GhostBottleneck
-from givtednet.module.common import ConvBnAct
+from givtednet.module.common import ConvNormAct
 from givtednet.module.mivit import MIViTBlock
 
 
@@ -12,7 +12,7 @@ class GIVTEDNet(nn.Module):
         super(GIVTEDNet, self).__init__()
 
         self.encoder0 = nn.Sequential(
-            ConvBnAct(3, 16, 3, 2),
+            ConvNormAct(3, 16, 3, 2),
             GhostBottleneck(16, 16, 16),
         )
         self.encoder1 = nn.Sequential(
@@ -34,10 +34,10 @@ class GIVTEDNet(nn.Module):
             GhostBottleneck(64, 112, 64, se_ratio=0.25),
         )
 
-        self.convdec3 = ConvBnAct(64, 40, 1)
-        self.convdec2 = ConvBnAct(40, 32, 1)
-        self.convdec1 = ConvBnAct(32, 24, 1)
-        self.convdec0 = ConvBnAct(24, 16, 1)
+        self.convdec3 = ConvNormAct(64, 40, 1)
+        self.convdec2 = ConvNormAct(40, 32, 1)
+        self.convdec1 = ConvNormAct(32, 24, 1)
+        self.convdec0 = ConvNormAct(24, 16, 1)
 
         DIM = [50, 40, 30, 20]
         DEPTH = [1, 1, 2, 2]

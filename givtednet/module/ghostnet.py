@@ -4,34 +4,34 @@ import torch.nn.functional as F
 
 import math
 
-from givtednet.module.common import ConvBnAct, SqueezeExcite
+from givtednet.module.common import ConvNormAct, SqueezeExcite
 
 
 class GhostModule(nn.Module):
     def __init__(
-        self, inp, oup, kernel_size=1, cheap_kernel=3, stride=1, ratio=2, bn=True, act=True
+        self, inp, oup, kernel_size=1, cheap_kernel=3, stride=1, ratio=2, norm="bn", act="relu"
     ):
         super(GhostModule, self).__init__()
         self.oup = oup
         init_channels = math.ceil(oup / ratio)
         new_channels = init_channels * (ratio - 1)
 
-        self.primary_conv = ConvBnAct(
+        self.primary_conv = ConvNormAct(
             inp,
             init_channels,
             kernel_size,
             stride=stride,
-            bn=bn,
+            norm=norm,
             act=act,
         )
 
-        self.cheap_operation = ConvBnAct(
+        self.cheap_operation = ConvNormAct(
             init_channels,
             new_channels,
             cheap_kernel,
             stride=1,
             groups=init_channels,
-            bn=bn,
+            norm=norm,
             act=act,
         )
 
@@ -59,44 +59,44 @@ class GhostBottleneck(nn.Module):
         self.stride = stride
 
         # Point-wise expansion
-        self.ghost1 = GhostModule(in_chs, mid_chs, act=True)
+        self.ghost1 = GhostModule(in_chs, mid_chs, act="relu")
 
         # Depth-wise convolution
         if self.stride > 1:
-            self.conv_dw = ConvBnAct(
+            self.conv_dw = ConvNormAct(
                 mid_chs,
                 mid_chs,
                 dw_kernel_size,
                 stride=stride,
                 groups=mid_chs,
-                bn=True,
-                act=False,
+                norm="bn",
+                act=None,
             )
 
         # Squeeze-and-excitation
         self.se = SqueezeExcite(mid_chs, se_ratio=se_ratio) if has_se else None
 
         # Point-wise linear projection
-        self.ghost2 = GhostModule(mid_chs, out_chs, act=False)
+        self.ghost2 = GhostModule(mid_chs, out_chs, act=None)
 
         # shortcut
         self.shortcut = nn.Sequential(
-            ConvBnAct(
+            ConvNormAct(
                 in_chs,
                 in_chs,
                 dw_kernel_size,
                 stride=stride,
                 groups=in_chs,
-                bn=True,
-                act=False,
+                norm="bn",
+                act=None,
             ),
-            ConvBnAct(
+            ConvNormAct(
                 in_chs,
                 out_chs,
                 1,
                 stride=1,
-                bn=True,
-                act=False,
+                norm="bn",
+                act=None,
             ),
         ) if not (in_chs == out_chs and self.stride == 1) else None
 

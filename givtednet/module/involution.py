@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from givtednet.module.common import ConvBnAct, _make_divisible
+from givtednet.module.common import ConvNormAct, _make_divisible
 
 
 class Involution(nn.Module):
@@ -21,7 +21,7 @@ class Involution(nn.Module):
         reduced_chs = _make_divisible(channel_in * reduction_ratio, divisor)
         
         self.o = nn.AvgPool2d(stride, stride) if stride > 1 else None
-        self.reduce = ConvBnAct(channel_in, reduced_chs, 1, bn=False, act=True)
+        self.reduce = ConvNormAct(channel_in, reduced_chs, 1, norm=None, act="relu")
         self.span = nn.Conv2d(reduced_chs, kernel_size * kernel_size * groups, 1)
         self.unfold = nn.Unfold(kernel_size, dilation, kernel_size // 2, stride)
 

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from givtednet.module.common import _make_divisible, SqueezeExcite
+from givtednet.module.common import ConvNormAct, SqueezeExcite
 from givtednet.module.involution import Involution
 
 
@@ -63,42 +63,13 @@ class MIViTBlock(nn.Module):
     ):
         super().__init__()
 
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(
-                channel,
-                channel,
-                kernel_size,
-                padding=kernel_size // 2,
-                groups=channel,
-                bias=False,
-            ),
-            nn.InstanceNorm2d(channel),
-            nn.ReLU(inplace=True),
-        )
-
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(
-                channel + 3, dim, kernel_size, padding=kernel_size // 2, bias=False
-            ),
-            nn.InstanceNorm2d(dim),
-            nn.ReLU(inplace=True),
-        )
+        self.conv1 = ConvNormAct(channel, channel, kernel_size, groups=channel, norm="in", act="relu")
+        self.conv2 = ConvNormAct(channel + 3, dim, kernel_size, norm="in", act="relu")
 
         self.invoformer = InvoFormer(dim, depth, mlp_ratio, dropout)
 
-        self.conv3 = nn.Sequential(
-            nn.Conv2d(dim, channel, 1, bias=False),
-            nn.InstanceNorm2d(channel),
-            nn.ReLU(inplace=True),
-        )
-
-        self.conv4 = nn.Sequential(
-            nn.Conv2d(
-                2 * channel, channel, kernel_size, padding=kernel_size // 2, bias=False
-            ),
-            nn.InstanceNorm2d(channel),
-            nn.ReLU(inplace=True),
-        )
+        self.conv3 = ConvNormAct(dim, channel, 1, norm="in", act="relu")
+        self.conv4 = ConvNormAct(2 * channel, channel, kernel_size, norm="in", act="relu")
 
     def forward(self, x, y):
         N, C, H, W = x.shape
