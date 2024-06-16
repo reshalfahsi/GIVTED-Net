@@ -100,7 +100,7 @@ python train.py --dataset_name "KvasirInstrument"
 
 ## Testing
 
-We conducted the evaluation on the Raspberry Pi 4. However, it can be run on some other hardware.
+We conducted the evaluation on the Raspberry Pi 4. However, it can be run on some other hardware, too.
 
 ```
 python eval.py
@@ -113,7 +113,7 @@ python eval.py
 
 
 ![qualitative](./assets/ardiy4-3411870-large.gif)
-*The qualitative results of GIVTED-Net and other models.*
+<div align="center">The qualitative results of GIVTED-Net and other models.</div>
 
 
 For quantitative results, please check our paper.
